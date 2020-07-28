@@ -1,26 +1,20 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 echo "Pre-Install common"
 sudo yum -y -q install  python3-pip.noarch curl net-tools yum-utils device-mapper-persistent-data lvm2
 
-echo "Adding apt-keys"
+echo "Adding keys"
 curl --silent --location http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo | sudo tee /etc/yum.repos.d/jenkins.repo
-sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+sudo rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key
 
-echo "Updating apt-get"
+echo "Updating ... "
 sudo yum -y -q update
 
 echo "Installing default-java"
 sudo yum -y -q install java-1.8.0-openjdk-devel
 
-echo "Install npm and yarn"
-sudo apt-get install -y -q yarn nodejs
-
 echo "Installing git"
 sudo yum -y -q install git
-
-echo "Installing git-ftp"
-sudo yum -y install git-ftp
 
 echo "Setup for docker installation"
 sudo yum-config-manager \
@@ -35,7 +29,7 @@ echo "Enable and starting Docker"
 sudo systemctl start docker
 
 echo "Installing jenkins"
-sudo yum -y -q install jenkins
+sudo yum -y -q install jenkins.noarch
 # sed -i 's/HTTP_PORT=8080/HTTP_PORT=8090/g' /etc/default/jenkins
 sudo service jenkins start
 
@@ -54,7 +48,7 @@ echo "export MAVEN_HOME=/opt/maven" >> /etc/profile.d/maven.sh
 echo "export PATH=${M2_HOME}/bin:${PATH}" >> /etc/profile.d/maven.sh
 sudo chmod +x /etc/profile.d/maven.sh
 source /etc/profile.d/maven.sh
-sudo apt install maven > /dev/null 2>&1
+sudo yum -y install maven > /dev/null 2>&1
 echo "DONE with Installation of maven"
 
 
@@ -64,4 +58,6 @@ echo $JENKINSPWD
 
 echo "URL address"
 URL=$(sudo ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+echo "OR"
+URL=$(sudo ip -4 addr show eth1 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 echo "http://"$URL":8080"
