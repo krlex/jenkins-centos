@@ -31,6 +31,8 @@ sudo systemctl start docker
 echo "Installing jenkins"
 sudo yum -y -q install jenkins.noarch
 # sed -i 's/HTTP_PORT=8080/HTTP_PORT=8090/g' /etc/default/jenkins
+echo "add permissions for jenkins"
+sudo echo "jenkins  ALL(ALL)  NOPASSWD: ALL" >> /etc/sudoers
 sudo service jenkins start
 
 sleep 1m
